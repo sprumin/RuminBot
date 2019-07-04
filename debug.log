@@ -1,0 +1,9 @@
+[0703/173858.892:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0703/173858.893:ERROR:exception_snapshot_win.cc(98)] thread ID 24092 not found in process
+[0704/145331.536:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0704/145331.698:ERROR:exception_snapshot_win.cc(98)] thread ID 14476 not found in process
+[0704/154610.228:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0704/154610.229:ERROR:exception_snapshot_win.cc(98)] thread ID 14496 not found in process
+[0704/164059.643:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0704/175314.015:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0704/175314.016:ERROR:exception_snapshot_win.cc(98)] thread ID 25260 not found in process
