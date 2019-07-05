@@ -3,6 +3,7 @@ venv
 
 # settings
 settings.py
+debug.log
 
 # __pycache__
 __pycache__
