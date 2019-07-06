@@ -10,6 +10,7 @@ __pycache__
 
 # db
 db.sqlite3
+sqlite3.exe
 
 # chromedriver
 chromedriver.exe
