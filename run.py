@@ -17,7 +17,7 @@ import websockets
 
 _time = datetime.now()
 
-slack = Slacker("xoxb-670678365843-670748559506-lxZ9rhc50sbe9i9SQ4FZ2HHR")
+slack = Slacker(settings.RUMIN_TOKEN)
 response = slack.rtm.start()
 endpoint = response.body['url']
 
@@ -28,7 +28,7 @@ cur = conn.cursor()
 
 
 def send_message(slack, message):
-    slack.chat.post_message("CL46K2R2S", message)
+    slack.chat.post_message(settings.ON_ON_GENERAL, message)
 
 
 def record_lol(driver, slack, url, username):
@@ -91,18 +91,18 @@ def main():
 
     # sqlite3
     cur.execute("select name from User")
-    fetch_user = cur.fetchall()
-    users = [row[0] for row in fetch_user]
+    users = cur.fetchall()
 
     cur.execute("select game_number from Games")
     games = [row[0] for row in cur.fetchall()]
 
     for user in users:
-        record_lol(driver, slack, f"https://www.op.gg/summoner/spectator/userName={parse.quote(user)}&", user)
-        check_games = get_record_link(driver, slack, f"https://www.op.gg/summoner/userName={user}", user, games)
-
+        record_lol(driver, slack, f"https://www.op.gg/summoner/spectator/userName={parse.quote(user[0])}&", user[0])
+        check_games = get_record_link(driver, slack, f"https://www.op.gg/summoner/userName={user[0]}", user[0], games)
+        print("game check", check_games)
         if check_games:
             for game in check_games:
+                print('game', game)
                 sql = "insert into Games(id, game_number) values (?, ?)"
                 cur.execute(sql, (get_last_data("Games") + 1, game))
 
