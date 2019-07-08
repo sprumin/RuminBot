@@ -9,7 +9,7 @@ import asyncio
 import json
 import re
 import requests
-import settings
+# import settings
 import sqlite3
 import time
 import websockets
@@ -17,17 +17,18 @@ import websockets
 
 _time = datetime.now()
 
-slack = Slacker(settings.RUMIN_TOKEN)
+slack = Slacker("xoxb-670678365843-670748559506-lxZ9rhc50sbe9i9SQ4FZ2HHR")
 response = slack.rtm.start()
 endpoint = response.body['url']
 
 # 진짜로 DB 이렇게 하기 싫었는데 비동기연동하면서 어떻게 써야할지 당장 생각이안나서 이렇게함.
 conn = sqlite3.connect("db.sqlite3")
+conn.text_factory = str
 cur = conn.cursor()
 
 
 def send_message(slack, message):
-    slack.chat.post_message(settings.ON_ON_GENERAL, message)
+    slack.chat.post_message("CL46K2R2S", message)
 
 
 def record_lol(driver, slack, url, username):
@@ -77,7 +78,7 @@ def get_last_data(table):
 def time_check(legacy_time):
     now_time = datetime.now()
 
-    if (now_time - legacy_time).seconds > 60:
+    if (now_time - legacy_time).seconds > 600:
         global _time
         _time = now_time
 
@@ -86,19 +87,19 @@ def time_check(legacy_time):
 
 def main():
     # chromedriver
-    options = webdriver.ChromeOptions()
-    driver = webdriver.Chrome("chromedriver", chrome_options=options)
+    driver = webdriver.Chrome("chromedriver")
 
     # sqlite3
     cur.execute("select name from User")
-    users = cur.fetchall()
+    fetch_user = cur.fetchall()
+    users = [row[0] for row in fetch_user]
 
     cur.execute("select game_number from Games")
     games = [row[0] for row in cur.fetchall()]
 
     for user in users:
-        record_lol(driver, slack, f"https://www.op.gg/summoner/spectator/userName={parse.quote(user[0])}&", user[0])
-        check_games = get_record_link(driver, slack, f"https://www.op.gg/summoner/userName={user[0]}", user[0], games)
+        record_lol(driver, slack, f"https://www.op.gg/summoner/spectator/userName={parse.quote(user)}&", user)
+        check_games = get_record_link(driver, slack, f"https://www.op.gg/summoner/userName={user}", user, games)
 
         if check_games:
             for game in check_games:
@@ -131,16 +132,17 @@ async def execute_bot():
                 send_message(slack, f"현재 DB에 저장된 유저들 리스트입니다.\n {users}")
             elif message['text'].startswith("!롤 추가"):
                 username = message['text'].split()[2]
-                print(message['text'].split())
+                cur.execute("select name from User")
+                users = [user[0] for user in cur.fetchall()]
 
-                sql = f"insert into User(id, name) select ({get_last_data('User') + 1}, {username}) "
-                sql += f"from dual where not exists (select * from table where name={username})"
+                if username not in users:
+                    sql = f"insert into User(id, name) values (?, ?)"
+                    cur.execute(sql, (get_last_data('User') + 1, username))
+                    conn.commit()
 
-                try:
-                    cur.execute(sql)
-                    cur.commit()
-                except:
-                    send_message(slack, "이미 존재하는 유저 이름입니다.")
+                    send_message(slack, f"{username} 님이 유저목록에 추가되었습니다.")
+                else:
+                    send_message(slack, "이미 존재하는 이름입니다.")
 
 
 if __name__ == "__main__":
