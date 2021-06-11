@@ -3,4 +3,4 @@ requests==2.22.0
 slacker==0.13.0
 websocket==0.2.1
 websocket-client==0.56.0
-websockets==7.0
+websockets==9.1
